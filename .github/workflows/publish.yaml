@@ -29,9 +29,10 @@ jobs:
           fetch-depth: 0
       - name: Conventional Changelog Action
         id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
+        uses: TriPSs/conventional-changelog-action@v6
         with:
           release-count: '1'
+          output-file: "false"
           skip-version-file: 'true'
           skip-commit: 'true'
           skip-git-pull: 'true'
