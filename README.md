@@ -1,4 +1,4 @@
-![https://pypi.org/p/openai-streaming](https://img.shields.io/pypi/v/pytest-evals.svg)
+![https://pypi.org/p/pytest-evals](https://img.shields.io/pypi/v/pytest-evals.svg)
 ![/LICENSE](https://img.shields.io/github/license/AlmogBaku/pytest-evals.svg)
 ![/issues](https://img.shields.io/github/issues/AlmogBaku/pytest-evals.svg)
 ![/stargazers](https://img.shields.io/github/stars/AlmogBaku/pytest-evals.svg)
