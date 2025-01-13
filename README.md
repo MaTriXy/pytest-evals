@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/github/license/AlmogBaku/pytest-evals.svg)](https://github.com/AlmogBaku/pytest-evals/blob/main/LICENSE)
 [![Issues](https://img.shields.io/github/issues/AlmogBaku/pytest-evals.svg)](https://github.com/AlmogBaku/pytest-evals/issues)
 [![Stars](https://img.shields.io/github/stars/AlmogBaku/pytest-evals.svg)](https://github.com/AlmogBaku/pytest-evals/stargazers)
+
 # pytest-evals
 
 Structured evaluation framework for LLM applications. Run tests at scale, collect metrics, analyze results - all with
@@ -10,7 +11,7 @@ pytest!
 - ✨ Run evaluations at scale
 - 🔄 Two-phase execution: cases first, analysis second
 - 📊 Built-in result collection and metrics calculation
-- 🚀 Parallel execution support
+- 🚀 Parallel execution support (with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/))
 
 ```python
 @pytest.mark.eval(name="my_eval")
@@ -110,8 +111,13 @@ This split allows you to:
   `--supress-failed-exit-code --run-eval` flags)
 - Collect comprehensive metrics
 
+**Note**: When running evaluation tests, the rest of your test suite will not run. This is by design to keep the results
+clean and focused.
+
 ### Working with a notebook
-It's also possible to run evaluations from a notebook. To do that, simply install [ipytest](https://github.com/chmp/ipytest), and
+
+It's also possible to run evaluations from a notebook. To do that, simply
+install [ipytest](https://github.com/chmp/ipytest), and
 reload the `pytest_harvest` plugin in your tests. This will allow you to run evaluations directly from a notebook:
 
 You can see an example of this in the [`example/example_notebook.ipynb`](example/example_notebook.ipynb) notebook.
@@ -154,5 +160,13 @@ evaluate:
 ```
 
 Use `--supress-failed-exit-code` with `--run-eval` - let the analysis phase determine success/failure. **If all your
-cases
-pass, your evaluation set is probably too small!**
+cases pass, your evaluation set is probably too small!**
+
+### Running in Parallel
+
+As your evaluation set grows, you may want to run your test cases in parallel. To do this, install
+[`pytest-xdist`](https://pytest-xdist.readthedocs.io/). `pytest-evals` will support that out of the box 🚀.
+
+```bash
+run: pytest --run-eval -n auto
+```
