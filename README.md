@@ -5,8 +5,8 @@
 
 # pytest-evals
 
-Structured evaluation framework for LLM applications. Run tests at scale, collect metrics, analyze results - all with
-pytest!
+A minimal pytest plugin to evaluate LLM applications easily. Run tests at scale, collect metrics, analyze results and
+seamlessly integrate with your CI/CD pipeline.
 
 - ✨ Run evaluations at scale
 - 🔄 Two-phase execution: cases first, analysis second
@@ -25,6 +25,8 @@ def test_agent(case, eval_bag):
 def test_analysis(eval_results):
     print(f"F1 Score: {calculate_f1(eval_results):.2%}")
 ```
+
+Evaluations are easy - just write tests! no need to reinvent the wheel with complex DSLs or frameworks.
 
 ## Why Another Eval Tool?
 
