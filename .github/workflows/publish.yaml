@@ -48,6 +48,7 @@ jobs:
   release:
     name: "Release and publish the version"
     needs: [ tests, version ]
+    if: ${{ needs.version.outputs.skipped != 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: pypi
