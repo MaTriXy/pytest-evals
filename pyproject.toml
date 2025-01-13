@@ -12,6 +12,13 @@ dependencies = [
 ]
 requires-python = ">=3.9"
 readme = "README.md"
+license = "MIT"
+keywords = ["pytest", "evaluations", "llm", "eval", "openai", "anthropic", "gpt", "pytest-evals"]
+
+[project.urls]
+Homepage = "https://github.com/AlmogBaku/pytest-evals"
+Repository = "https://github.com/AlmogBaku/pytest-evals"
+Issues = "https://github.com/AlmogBaku/pytest-evals/issues"
 
 [build-system]
 requires = ["hatchling"]
