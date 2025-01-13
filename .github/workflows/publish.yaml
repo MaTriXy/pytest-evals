@@ -6,7 +6,13 @@ on:
       - master
     paths:
       - '**.py'
-  workflow_dispatch: ~
+  workflow_dispatch:
+    inputs:
+      skip_on_empty_changelog:
+        description: "Skip the release if the changelog is empty"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -37,6 +43,7 @@ jobs:
           skip-commit: 'true'
           skip-git-pull: 'true'
           git-push: 'false'
+          skip-on-empty: ${{ inputs.skip_on_empty_changelog }}
           fallback-version: '0.1.0'
   release:
     name: "Release and publish the version"
