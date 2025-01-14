@@ -1,3 +1,14 @@
+## [0.2.2](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.1...v0.2.2) (2025-01-14)
+
+
+### Bug Fixes
+
+* add tests, and fix bugs :) ([7d29898](https://github.com/AlmogBaku/pytest-evals/commit/7d2989838a8f0010f4f97c58e9ad3b0f5735c1fc))
+
+
+
+
+
 ## [0.2.1](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.0...v0.2.1) (2025-01-13)
 
 
