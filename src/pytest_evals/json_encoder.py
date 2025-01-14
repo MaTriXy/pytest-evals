@@ -4,6 +4,7 @@ from enum import Enum
 
 try:
     from pydantic import BaseModel
+
     HAVE_PYDANTIC = True
 except ImportError:
     HAVE_PYDANTIC = False
@@ -15,9 +16,9 @@ class AdvancedJsonEncoder(json.JSONEncoder):
 
     def default(self, o):
         if HAVE_PYDANTIC and isinstance(o, BaseModel):
-            return json.loads(o.model_dump_json()) # type: ignore
+            return json.loads(o.model_dump_json())  # type: ignore
         if dataclasses.is_dataclass(o):
-            return dataclasses.asdict(o) # type: ignore
+            return dataclasses.asdict(o)  # type: ignore
         if isinstance(o, Enum):
             return o.value
         return super().default(o)

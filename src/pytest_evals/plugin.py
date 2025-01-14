@@ -1,34 +1,37 @@
 import json
 import logging
-import cloudpickle
 from collections import defaultdict
 from os.path import isabs
 from pathlib import Path
 from typing import Any, List, Mapping
 
+import cloudpickle
 import pytest
 from pytest_harvest import create_results_bag_fixture, get_session_results_dct
-from pytest_harvest.xdist_api import is_xdist_worker
 
 from .json_encoder import AdvancedJsonEncoder
 from .models import EvalResult
 
 # Constants
-EVAL_MARK_NAME = "eval"
-EVAL_ANALYSIS_MARK_NAME = "eval_analysis"
+EVAL_MARK_NAME = "eval"  # pragma: no cover
+EVAL_ANALYSIS_MARK_NAME = "eval_analysis"  # pragma: no cover
 
 # Fixtures
-eval_bag = create_results_bag_fixture("fixture_store", name="eval_bag")
+eval_bag = create_results_bag_fixture(
+    "fixture_store", name="eval_bag"
+)  # pragma: no cover
 
 
 @pytest.fixture(scope="function")
 def eval_bag_results(request) -> Mapping[str, Mapping[str, Any]]:
     """Fixture that provides access to evaluation results."""
     ret = simple_eval_results(request.session)
-    
+
     if not request.session.config.getoption("--run-eval"):
         if (request.session.config.out_path / "eval-results-raw.json").exists():
-            with open(request.session.config.out_path / "eval-results-raw.json", "r") as f:
+            with open(
+                request.session.config.out_path / "eval-results-raw.json", "r"
+            ) as f:
                 ret.update(json.load(f))
     return ret
 
@@ -95,9 +98,11 @@ def pytest_configure(config):
     config.out_path = out_path
     config.out_path.mkdir(exist_ok=True)
 
+
 @pytest.fixture
-def out_path(request):
+def out_path(request) -> Path:
     return request.config.out_path
+
 
 def is_xdist_session(config):
     """Check if the session is a xdist session."""
@@ -163,9 +168,9 @@ def pytest_collection_modifyitems(config, items):
                 items.remove(item)
         else:
             if is_eval:
-                item.add_marker(skip_eval)
+                item.add_marker(skip_eval)  # pragma: no cover
             if is_analysis:
-                item.add_marker(skip_analysis)
+                item.add_marker(skip_analysis)  # pragma: no cover
 
 
 def pytest_sessionfinish(session):
@@ -174,7 +179,7 @@ def pytest_sessionfinish(session):
     if bool(session.config.getoption("--supress-failed-exit-code", False)):
         session.exitstatus = 0
 
-    if is_xdist_worker(session):
+    if hasattr(session.config, "workerinput"):
         return
 
     if (
@@ -186,7 +191,7 @@ def pytest_sessionfinish(session):
             json.dump(res, f, cls=AdvancedJsonEncoder)
 
 
-def simple_eval_results(session):
+def simple_eval_results(session) -> Mapping[str, Mapping[str, Any]]:
     """Get simple evaluation results from the session."""
     res = get_session_results_dct(session, results_bag_fixture_name="eval_bag")
 
@@ -194,11 +199,11 @@ def simple_eval_results(session):
     for k, v in res.items():
         obj = v.get("pytest_obj", None)
         if not obj or not hasattr(obj, "pytestmark"):
-            continue
+            continue  # pragma: no cover
 
         e_marker = eval_marker(obj.pytestmark)
         if not e_marker:
-            continue
+            continue  # pragma: no cover
 
         ret[k] = {k1: v1 for k1, v1 in v.items() if k1 != "pytest_obj"}
         ret[k]["pytest_obj_name"] = v["pytest_obj"].__name__
@@ -206,6 +211,8 @@ def simple_eval_results(session):
 
     return ret
 
+
+# no cover: start
 
 # XDist harvesting configuration
 XDIST_HARVESTED_PATH = Path("./.xdist_harvested/")
@@ -231,3 +238,6 @@ def pytest_harvest_xdist_load():
         with pkl_file.open("rb") as f:
             workers_saved_material[wid] = cloudpickle.load(f)
     return workers_saved_material
+
+
+# no cover: stop

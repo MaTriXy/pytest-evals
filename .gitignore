@@ -6,6 +6,15 @@ dist/
 wheels/
 *.egg-info
 
+coverage/
+.coverage
+*.py,cover
+coverage.xml
+junit/
+test-out/
+
+.ipynb_checkpoints/
+
 # Virtual environments
 .venv
 
@@ -15,4 +24,4 @@ wheels/
 .DS_Store
 
 
-test-out/
+.env
