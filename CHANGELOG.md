@@ -1,3 +1,15 @@
+## [0.2.3](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.2...v0.2.3) (2025-01-14)
+
+
+### Bug Fixes
+
+* add custom ipython extension to make it work smoothly in notebooks :) ([9e5c897](https://github.com/AlmogBaku/pytest-evals/commit/9e5c897a47971e36ca9b1c41c89674301de995fe))
+* better tests + coverage ([f87d99f](https://github.com/AlmogBaku/pytest-evals/commit/f87d99f7a50a2630a421a39e3e9927b65a75a2e4))
+
+
+
+
+
 ## [0.2.2](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.1...v0.2.2) (2025-01-14)
 
 
