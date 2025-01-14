@@ -43,7 +43,7 @@ jobs:
           skip-commit: 'true'
           skip-git-pull: 'true'
           git-push: 'false'
-          skip-on-empty: ${{ inputs.skip_on_empty_changelog }}
+          skip-on-empty: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_on_empty_changelog || false }}
           fallback-version: '0.1.0'
   release:
     name: "Release and publish the version"
