@@ -32,7 +32,7 @@ def summarizer():
                 {"role": "user", "content": text},
             ],
         )
-        return res.choices[0].message.content # type: ignore
+        return res.choices[0].message.content  # type: ignore
 
     return _summarize
 

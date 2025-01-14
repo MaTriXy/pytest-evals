@@ -12,6 +12,8 @@ seamlessly integrate with your CI/CD pipeline.
 - 🔄 Two-phase execution: cases first, analysis second
 - 📊 Built-in result collection and metrics calculation
 - 🚀 Parallel execution support (with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/))
+- 🔀 Supports asynchronous tests with `pytest-asyncio`
+-
 
 ```python
 @pytest.mark.eval(name="my_eval")
@@ -120,9 +122,31 @@ clean and focused.
 
 It's also possible to run evaluations from a notebook. To do that, simply
 install [ipytest](https://github.com/chmp/ipytest), and
-reload the `pytest_harvest` plugin in your tests. This will allow you to run evaluations directly from a notebook:
+load the extension:
 
-You can see an example of this in the [`example/example_notebook.ipynb`](example/example_notebook.ipynb) notebook.
+```ipython
+%load_ext pytest_evals
+```
+
+Then, use the magic commands `%%ipytest_eval` in your cell to run evaluations. This will run the evaluation phase and
+then the analysis phase.
+
+```ipython
+%%ipytest_eval
+import pytest
+
+@pytest.mark.eval(name="my_eval")
+def test_agent(eval_bag):
+    eval_bag.prediction = agent.run(case["input"])
+    
+@pytest.mark.eval_analysis(name="my_eval")
+def test_analysis(eval_results):
+    print(f"F1 Score: {calculate_f1(eval_results):.2%}")
+```
+
+You can see an example of this in the [`example/example_notebook.ipynb`](example/example_notebook.ipynb) notebook. Or
+look at the [advanced example](example/example_notebook_advanced.ipynb) for a more complex example that tracks multiple
+experiments.
 
 ## Production Use
 

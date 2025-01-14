@@ -3,7 +3,7 @@ import logging
 from collections import defaultdict
 from os.path import isabs
 from pathlib import Path
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, cast
 
 import cloudpickle
 import pytest
@@ -23,15 +23,14 @@ eval_bag = create_results_bag_fixture(
 
 
 @pytest.fixture(scope="function")
-def eval_bag_results(request) -> Mapping[str, Mapping[str, Any]]:
+def eval_bag_results(request, out_path) -> Mapping[str, Mapping[str, Any]]:
     """Fixture that provides access to evaluation results."""
-    ret = simple_eval_results(request.session)
+    ret = cast(dict, simple_eval_results(request.session))
 
     if not request.session.config.getoption("--run-eval"):
-        if (request.session.config.out_path / "eval-results-raw.json").exists():
-            with open(
-                request.session.config.out_path / "eval-results-raw.json", "r"
-            ) as f:
+        raw = out_path / "eval-results-raw.json"
+        if raw.exists():
+            with open(raw, "r") as f:
                 ret.update(json.load(f))
     return ret
 

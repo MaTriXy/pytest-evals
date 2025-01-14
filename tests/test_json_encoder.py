@@ -70,4 +70,4 @@ def test_pydantic_import_error():
         importlib.reload(pytest_evals.json_encoder)
 
         assert not pytest_evals.json_encoder.HAVE_PYDANTIC
-        assert pytest_evals.json_encoder.BaseModel == type(None)
+        assert pytest_evals.json_encoder.BaseModel is type(None)
