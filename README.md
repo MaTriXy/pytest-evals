@@ -12,8 +12,8 @@ seamlessly integrate with your CI/CD pipeline.
 - 🔄 Two-phase execution: cases first, analysis second
 - 📊 Built-in result collection and metrics calculation
 - 🚀 Parallel execution support (with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/))
-- 🔀 Supports asynchronous tests with `pytest-asyncio`
--
+- 🔀 Supports asynchronous tests with [`pytest-asyncio`](https://pytest-asyncio.readthedocs.io/en/latest/)
+- 📒 Work like a charm with notebooks using [`ipytest`](https://github.com/chmp/ipytest)
 
 ```python
 @pytest.mark.eval(name="my_eval")
