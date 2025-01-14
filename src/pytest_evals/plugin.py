@@ -60,7 +60,7 @@ def pytest_addoption(parser, pluginmanager):
     )
     group.addoption(
         "--supress-failed-exit-code",
-        action="store",
+        action="store_true",
         default=False,
         help="Supress failed exit code. Useful for CI/CD with a separate step for test analysis",
     )
@@ -89,7 +89,7 @@ def pytest_configure(config):
         "eval_analysis: mark test as an evaluation analysis. Analysis tests MUST run after all other tests. Analysis tests will only run when --run_eval-analysis is passed",
     )
 
-    out_path = config.getoption("--out-path")
+    out_path = Path(config.getoption("--out-path"))
     if not isabs(out_path):
         out_path = Path(config.invocation_dir / out_path)
     config.out_path = out_path
