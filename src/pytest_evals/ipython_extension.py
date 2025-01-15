@@ -1,4 +1,16 @@
-from IPython.core.magic import Magics, magics_class, cell_magic
+try:
+    from IPython.core.magic import Magics, magics_class, cell_magic  # type: ignore
+except ImportError:
+
+    def magics_class(cls):
+        pass
+
+    class Magics:
+        def __init__(self, shell):
+            pass
+
+    def cell_magic(func):
+        pass
 
 
 @magics_class
@@ -24,7 +36,8 @@ class EvalsMagics(Magics):
             )
         except ImportError:
             raise ImportError(
-                "ipytest is required to use this magic command. Please install it with: pip install ipytest"
+                "⚠️ `ipytest` is required to use `pytest-evals` in notebooks.\n"
+                "    ↳ Please install it with: `pip install ipytest`"
             )
 
     @cell_magic
