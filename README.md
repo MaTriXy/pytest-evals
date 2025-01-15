@@ -16,6 +16,7 @@ seamlessly integrate with your CI/CD pipeline.
 - 📒 Work like a charm with notebooks using [`ipytest`](https://github.com/chmp/ipytest)
 
 ```python
+# Run this test against your LLM application: for each row in the test data, predict the output
 @pytest.mark.eval(name="my_eval")
 @pytest.mark.parametrize("case", TEST_DATA)
 def test_agent(case, eval_bag):
@@ -23,6 +24,7 @@ def test_agent(case, eval_bag):
     eval_bag.prediction = agent.predict(case["input"])
 
 
+# Then, analyze the results altogether to understand how well it performs across a variety of cases
 @pytest.mark.eval_analysis(name="my_eval")
 def test_analysis(eval_results):
     print(f"F1 Score: {calculate_f1(eval_results):.2%}")
