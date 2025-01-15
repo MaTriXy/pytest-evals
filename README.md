@@ -124,14 +124,14 @@ It's also possible to run evaluations from a notebook. To do that, simply
 install [ipytest](https://github.com/chmp/ipytest), and
 load the extension:
 
-```ipython
+```jupyterpython
 %load_ext pytest_evals
 ```
 
 Then, use the magic commands `%%ipytest_eval` in your cell to run evaluations. This will run the evaluation phase and
 then the analysis phase.
 
-```ipython
+```jupyterpython
 %%ipytest_eval
 import pytest
 
