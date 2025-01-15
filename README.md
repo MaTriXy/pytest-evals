@@ -131,7 +131,7 @@ load the extension:
 Then, use the magic commands `%%ipytest_eval` in your cell to run evaluations. This will run the evaluation phase and
 then the analysis phase.
 
-```jupyterpython
+```jupyter
 %%ipytest_eval
 import pytest
 
