@@ -100,6 +100,7 @@ def pytest_configure(config):
 
 @pytest.fixture
 def out_path(request) -> Path:
+    """Get the output storage path. This is useful for storing test artifacts such as results."""
     return request.config.out_path
 
 
@@ -187,7 +188,7 @@ def pytest_sessionfinish(session):
     ):
         res = simple_eval_results(session)
         with open(session.config.out_path / "eval-results-raw.json", "w") as f:
-            json.dump(res, f, cls=AdvancedJsonEncoder)
+            json.dump(res, f, cls=AdvancedJsonEncoder)  # noqa: ignore
 
 
 def simple_eval_results(session) -> Mapping[str, Mapping[str, Any]]:
