@@ -1,3 +1,15 @@
+## [0.2.6](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.5...v0.2.6) (2025-01-20)
+
+
+### Bug Fixes
+
+* json encoding of some objects ([46d017e](https://github.com/AlmogBaku/pytest-evals/commit/46d017ef1aa2c1b3fbca3e4fdddb5911b1268bf7))
+* use EvalBag type ([5537e4d](https://github.com/AlmogBaku/pytest-evals/commit/5537e4d0a4f92b130013b596c2f19b3796265bbe))
+
+
+
+
+
 ## [0.2.5](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.4...v0.2.5) (2025-01-16)
 
 
