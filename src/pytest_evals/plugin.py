@@ -10,7 +10,7 @@ import pytest
 from pytest_harvest import create_results_bag_fixture, get_session_results_dct
 
 from .json_encoder import AdvancedJsonEncoder
-from .models import EvalResult
+from .models import EvalResults, EvalBag
 
 # Constants
 EVAL_MARK_NAME = "eval"  # pragma: no cover
@@ -18,7 +18,7 @@ EVAL_ANALYSIS_MARK_NAME = "eval_analysis"  # pragma: no cover
 
 # Fixtures
 eval_bag = create_results_bag_fixture(
-    "fixture_store", name="eval_bag"
+    "fixture_store", name="eval_bag", bag_type=EvalBag
 )  # pragma: no cover
 
 
@@ -36,7 +36,7 @@ def eval_bag_results(request, out_path) -> Mapping[str, Mapping[str, Any]]:
 
 
 @pytest.fixture(scope="function")
-def eval_results(request, eval_bag_results) -> List[EvalResult]:
+def eval_results(request, eval_bag_results) -> List[EvalResults]:
     """Fixture that provides access to evaluation results as EvalResult objects."""
     marker = eval_analysis_marker(request.node.own_markers)
     if not marker:
@@ -45,7 +45,7 @@ def eval_results(request, eval_bag_results) -> List[EvalResult]:
         )
 
     return [
-        EvalResult.from_result_bag(v)
+        EvalResults.from_result_bag(v)
         for k, v in eval_bag_results.items()
         if v["eval_name"] == marker.kwargs["name"]
     ]

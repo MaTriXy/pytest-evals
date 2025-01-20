@@ -8,12 +8,13 @@ from .plugin import (
     eval_marker,
     out_path,
 )
-from .models import EvalResult
+from .models import EvalResults, EvalBag
 from .ipython_extension import load_ipython_extension
 
 __all__ = [
     # Core functionality
-    "EvalResult",
+    "EvalResults",
+    "EvalBag",
     "eval_bag",
     "eval_bag_results",
     "eval_results",

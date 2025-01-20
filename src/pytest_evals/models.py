@@ -4,8 +4,12 @@ from typing import Any, Mapping
 from pytest_harvest import ResultsBag
 
 
+class EvalBag(ResultsBag):
+    pass
+
+
 @dataclasses.dataclass
-class EvalResult:
+class EvalResults:
     """Data class representing an evaluation result."""
 
     eval_name: str
@@ -16,7 +20,7 @@ class EvalResult:
     result: ResultsBag
 
     @classmethod
-    def from_result_bag(cls, item: Mapping[str, Any]) -> "EvalResult":
+    def from_result_bag(cls, item: Mapping[str, Any]) -> "EvalResults":
         """Create an EvalResult instance from a result bag item."""
         return cls(
             eval_name=item["eval_name"],
