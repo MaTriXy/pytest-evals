@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from unittest.mock import patch
 
-import pytest
+import pandas as pd
 from pydantic import BaseModel
 
 from pytest_evals.json_encoder import AdvancedJsonEncoder
@@ -54,10 +54,41 @@ def test_pydantic_encoding():
     assert json.loads(encoded) == {"name": "John", "age": 30}
 
 
-def test_unsupported_type():
+def test_function_encoding():
     """Test error on unsupported type"""
-    with pytest.raises(TypeError):
+    assert (
         json.dumps(lambda x: x, cls=AdvancedJsonEncoder)
+        == '"<tests.test_json_encoder.<lambda>>"'
+    )
+
+
+def test_pandas_import_error():
+    """Test the fallback functions when pandas is not available"""
+    test_obj = object()
+
+    with patch.dict("sys.modules", {"pandas": None}):
+        # Import the functions directly inside the patch context
+        from pytest_evals.json_encoder import is_series, is_dataframe
+
+        # Test both fallback functions
+        assert not is_series(test_obj)
+        assert not is_dataframe(test_obj)
+
+
+def test_dataframe_encoding():
+    """Test error on unsupported type"""
+    assert (
+        json.dumps(pd.DataFrame([{"field": "value"}]), cls=AdvancedJsonEncoder)
+        == '[{"field": "value"}]'
+    )
+
+
+def test_series_encoding():
+    """Test error on unsupported type"""
+    assert (
+        json.dumps(pd.Series([1, 2, 3]), cls=AdvancedJsonEncoder)
+        == '{"0": 1, "1": 2, "2": 3}'
+    )
 
 
 # Test for json_encoder.py ImportError case
