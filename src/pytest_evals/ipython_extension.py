@@ -1,3 +1,4 @@
+# pragma: exclude file
 try:
     from IPython.core.magic import Magics, magics_class, cell_magic  # type: ignore
 except ImportError:
