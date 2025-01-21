@@ -1,4 +1,6 @@
 # pragma: exclude file
+import shlex
+
 try:
     from IPython.core.magic import Magics, magics_class, cell_magic  # type: ignore
 except ImportError:
@@ -29,8 +31,6 @@ class EvalsMagics(Magics):
                 run_in_thread=True,  # pyright: ignore [reportArgumentType]
                 addopts=[  # pyright: ignore [reportArgumentType]
                     "--assert=plain",
-                    "--run-eval",
-                    "--run-eval-analysis",
                     "-s",  # Don't capture output
                     "--log-cli-level=ERROR",
                 ],
@@ -53,11 +53,32 @@ class EvalsMagics(Magics):
         """
         # Force reload to ensure fresh test environment
         from pytest_harvest import FIXTURE_STORE
+        from IPython.core.getipython import get_ipython
 
         FIXTURE_STORE.clear()
 
-        # Run the cell content as tests
-        self.ipytest_magic(line, cell)
+        run_args = shlex.split(line)
+
+        if "--run-eval" not in run_args and "--run-eval-analysis" not in run_args:
+            run_args.append("--run-eval")
+            run_args.append("--run-eval-analysis")
+
+        self.ipytest.clean()
+
+        try:
+            get_ipython().run_cell(cell)  # pyright: ignore [reportOptionalMemberAccess]
+
+        except TypeError as e:
+            if "raw_cell" in str(e):
+                raise RuntimeError(
+                    "The ipytest magic cannot evaluate the cell. Most likely you "
+                    "are running a modified ipython version. Consider using "
+                    "`ipytest.run` and `ipytest.clean` directly.",
+                ) from e
+
+            raise e
+
+        self.ipytest.run(*run_args)
 
 
 def load_ipython_extension(ipython):

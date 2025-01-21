@@ -2,8 +2,8 @@
 
 # `pytest-evals` 🚀
 
-Test your LLM outputs against examples - no more manual checking! A pytest plugin that helps you verify your LLM is
-giving good answers.
+Test your LLM outputs against examples - no more manual checking! A (minimalistic) pytest plugin that helps you to
+evaluate that your LLM is giving good answers.
 
 [![PyPI version](https://img.shields.io/pypi/v/pytest-evals.svg)](https://pypi.org/p/pytest-evals)
 [![License](https://img.shields.io/github/license/AlmogBaku/pytest-evals.svg)](https://github.com/AlmogBaku/pytest-evals/blob/main/LICENSE)
@@ -72,7 +72,7 @@ pytest --run-eval-analysis
 
 ## 😵‍💫 Why Another Eval Tool?
 
-**Evaluations are just tests.** No need for complex frameworks or DSLs. `pytest-evals` is minimal by design:
+**Evaluations are just tests.** No need for complex frameworks or DSLs. `pytest-evals` is minimalistic by design:
 
 - Use `pytest` - the tool you already know
 - Keep tests and evaluations together
