@@ -380,3 +380,110 @@ def test_worker_session_finish(pytestconfig):
         exitstatus = 0
 
     assert plugin.pytest_sessionfinish(WorkerSession()) is None
+
+
+def test_save_evals_csv_option(pytester, tmp_path):
+    """Test the --save-evals-csv option with various scenarios"""
+    out_dir = tmp_path / "test-output"
+    out_dir.mkdir(exist_ok=True)
+
+    # Create test file with evaluation test
+    pytester.makepyfile("""
+        import pytest
+        
+        @pytest.mark.eval(name="test_eval")
+        def test_simple(eval_bag):
+            eval_bag.result = "test_value"
+            eval_bag.metadata = {"key": "value"}
+            assert True
+    """)
+
+    result1 = pytester.runpytest(f"--out-path={out_dir}", "--save-evals-csv")
+    assert result1.ret != 0
+    result1.stderr.fnmatch_lines(
+        "*--save-evals-csv option can only be used with the --run-eval option*"
+    )
+
+    # Case 2: Test with both flags and verify CSV creation
+    result2 = pytester.runpytest(
+        "--run-eval", f"--out-path={out_dir}", "--save-evals-csv", "-v"
+    )
+    result2.assert_outcomes(passed=1)
+
+    # Verify both JSON and CSV files exist
+    csv_file = out_dir / "eval-results-raw.csv"
+    json_file = out_dir / "eval-results-raw.json"
+    assert csv_file.exists()
+    assert json_file.exists()
+
+
+def test_save_evals_csv_missing_pandas(pytester, tmp_path, monkeypatch):
+    """Test handling of missing pandas when --save-evals-csv is used"""
+    out_dir = tmp_path / "test-output"
+    out_dir.mkdir(exist_ok=True)
+
+    # Mock pandas to raise ImportError
+    import sys
+
+    with patch.dict(sys.modules, {"pandas": None}):
+        pytester.makepyfile("""
+            import pytest
+            
+            @pytest.mark.eval(name="test_eval")
+            def test_simple():
+                assert True
+        """)
+
+        result = pytester.runpytest(
+            "--run-eval", f"--out-path={out_dir}", "--save-evals-csv"
+        )
+        assert result.ret != 0
+        result.stderr.fnmatch_lines(
+            "*The --save-evals-csv option requires the pandas library*"
+        )
+
+
+def test_csv_data_normalization(pytester, tmp_path):
+    """Test that complex data structures are properly normalized in CSV output"""
+    out_dir = tmp_path / "test-output"
+    out_dir.mkdir(exist_ok=True)
+
+    pytester.makepyfile("""
+        import pytest
+        from datetime import datetime
+        
+        TEST_DATA = [
+            {"input": "test1", "expected": True},
+            {"input": "test2", "expected": False}
+        ]
+        
+        @pytest.mark.eval(name="test_eval")
+        @pytest.mark.parametrize("case", TEST_DATA)
+        def test_complex_data(eval_bag, case):
+            eval_bag.nested_data = {
+                "list": [1, 2, 3],
+                "dict": {"a": 1, "b": 2},
+                "date": str(datetime.now()),
+                "case": case
+            }
+            assert True
+    """)
+
+    result = pytester.runpytest(
+        "--run-eval", f"--out-path={out_dir}", "--save-evals-csv", "-v"
+    )
+    result.assert_outcomes(passed=2)  # Two test cases due to parametrize
+
+    # Verify CSV was created with normalized data
+    csv_file = out_dir / "eval-results-raw.csv"
+    assert csv_file.exists()
+
+    # Read the CSV content to verify structure (if pandas is available)
+    try:
+        import pandas as pd
+
+        df = pd.read_csv(csv_file)
+        assert not df.empty
+        assert "eval_bag.nested_data.date" in df.columns
+    except ImportError:
+        pass  # Skip detailed verification if pandas isn't available

@@ -109,18 +109,27 @@ This split allows you to:
 **Note**: When running evaluation tests, the rest of your test suite will not run. This is by design to keep the results
 clean and focused.
 
+## 💾 Saving case results
+By default, `pytest-evals` saves the results of each case in a json file to allow the analysis phase to access them.
+However, this might not be a friendly format for deeper analysis. To save the results in a more friendly format, as a
+CSV file, use the `--save-evals-csv` flag:
+
+```bash
+pytest --run-eval --save-evals-csv
+```
+
 ## 📝 Working with a notebook
 
 It's also possible to run evaluations from a notebook. To do that, simply
 install [ipytest](https://github.com/chmp/ipytest), and load the extension:
 
 ```python
-%load_ext
-pytest_evals
+%load_ext pytest_evals
 ```
 
 Then, use the magic commands `%%ipytest_eval` in your cell to run evaluations. This will run the evaluation phase and
-then the analysis phase.
+then the analysis phase. By default, using this magic will run both `--run-eval` and `--run-eval-analysis`, but you can
+specify your own flags by passing arguments right after the magic command (e.g., `%%ipytest_eval --run-eval`).
 
 ```python
 %%ipytest_eval

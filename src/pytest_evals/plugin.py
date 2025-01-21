@@ -78,6 +78,12 @@ def pytest_addoption(parser, pluginmanager):
         default=False,
         help="Run evaluation analysis tests(mark with @pytest.mark.eval_analysis)",
     )
+    group.addoption(
+        "--save-evals-csv",
+        action="store_true",
+        default=False,
+        help="Save evaluation cases results to a CSV file",
+    )
 
 
 def pytest_configure(config):
@@ -96,6 +102,11 @@ def pytest_configure(config):
         out_path = Path(config.invocation_dir / out_path)
     config.out_path = out_path
     config.out_path.mkdir(exist_ok=True)
+
+    if config.getoption("--save-evals-csv") and not config.getoption("--run-eval"):
+        raise ValueError(
+            "The --save-evals-csv option can only be used with the --run-eval option"
+        )
 
 
 @pytest.fixture
@@ -175,8 +186,11 @@ def pytest_collection_modifyitems(config, items):
 
 def pytest_sessionfinish(session):
     """Handle session finish."""
-    prev_exitstatus = getattr(session, "exitstatus", 0)
-    if bool(session.config.getoption("--supress-failed-exit-code", False)):
+    orig_exitstatus = getattr(session, "exitstatus", 0)
+    if (
+        session.config.getoption("--supress-failed-exit-code")
+        and orig_exitstatus != pytest.ExitCode.INTERNAL_ERROR
+    ):
         session.exitstatus = 0
 
     if hasattr(session.config, "workerinput"):
@@ -184,11 +198,42 @@ def pytest_sessionfinish(session):
 
     if (
         session.config.getoption("--run-eval")
-        and prev_exitstatus != pytest.ExitCode.INTERNAL_ERROR
+        and orig_exitstatus != pytest.ExitCode.INTERNAL_ERROR
     ):
         res = simple_eval_results(session)
         with open(session.config.out_path / "eval-results-raw.json", "w") as f:
             json.dump(res, f, cls=AdvancedJsonEncoder)  # noqa: ignore
+
+        if session.config.getoption("--save-evals-csv"):
+            try:
+                import pandas as pd
+            except ImportError:
+                raise ImportError(
+                    "The --save-evals-csv option requires the pandas library"
+                )
+
+            results_df = pd.json_normalize(
+                [
+                    {
+                        "test_id": name,
+                        "status": data["status"],
+                        "duration_ms": data["duration_ms"],
+                        "pytest_obj_name": data["pytest_obj_name"],
+                        "eval_name": data["eval_name"],
+                        "params": json.loads(
+                            json.dumps(data["params"], cls=AdvancedJsonEncoder)
+                        ),
+                        "eval_bag": json.loads(
+                            json.dumps(
+                                data["fixtures"].get("eval_bag", {}),
+                                cls=AdvancedJsonEncoder,
+                            )
+                        ),
+                    }
+                    for name, data in res.items()
+                ]
+            ).set_index("test_id")
+            results_df.to_csv(session.config.out_path / "eval-results-raw.csv")
 
 
 def simple_eval_results(session) -> Mapping[str, Mapping[str, Any]]:
