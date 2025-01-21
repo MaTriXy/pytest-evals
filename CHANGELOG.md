@@ -1,3 +1,14 @@
+## [0.2.7](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.6...v0.2.7) (2025-01-21)
+
+
+### Bug Fixes
+
+* allow splitting tests in notebooks ([ba4b450](https://github.com/AlmogBaku/pytest-evals/commit/ba4b450ded4a7123ceb943bb6876d5d82d3454a3))
+
+
+
+
+
 ## [0.2.6](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.5...v0.2.6) (2025-01-20)
 
 
