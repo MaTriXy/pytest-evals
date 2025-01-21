@@ -19,7 +19,10 @@ try:
 
     def is_dataframe(obj):  # pyright: ignore [reportRedeclaration]
         return isinstance(obj, pd.DataFrame)
+
+    HAVE_PANDAS = True
 except ImportError:
+    HAVE_PANDAS = False
 
     def is_series(obj):
         return False
@@ -42,8 +45,8 @@ class AdvancedJsonEncoder(json.JSONEncoder):
             return f"<{o.__module__}.{o.__name__}>"
         if isinstance(o, type(None)):
             return None
-        if is_series(o):
+        if HAVE_PANDAS and is_series(o):
             return o.to_dict()
-        if is_dataframe(o):
+        if HAVE_PANDAS and is_dataframe(o):
             return o.to_dict(orient="records")
         return super().default(o)

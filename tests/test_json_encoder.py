@@ -5,6 +5,7 @@ from enum import Enum
 from unittest.mock import patch
 
 import pandas as pd
+import pytest
 from pydantic import BaseModel
 
 from pytest_evals.json_encoder import AdvancedJsonEncoder
@@ -62,21 +63,8 @@ def test_function_encoding():
     )
 
 
-def test_pandas_import_error():
-    """Test the fallback functions when pandas is not available"""
-    test_obj = object()
-
-    with patch.dict("sys.modules", {"pandas": None}):
-        # Import the functions directly inside the patch context
-        from pytest_evals.json_encoder import is_series, is_dataframe
-
-        # Test both fallback functions
-        assert not is_series(test_obj)
-        assert not is_dataframe(test_obj)
-
-
 def test_dataframe_encoding():
-    """Test error on unsupported type"""
+    """Test DataFrame encoding"""
     assert (
         json.dumps(pd.DataFrame([{"field": "value"}]), cls=AdvancedJsonEncoder)
         == '[{"field": "value"}]'
@@ -84,11 +72,28 @@ def test_dataframe_encoding():
 
 
 def test_series_encoding():
-    """Test error on unsupported type"""
+    """Test Series encoding"""
     assert (
         json.dumps(pd.Series([1, 2, 3]), cls=AdvancedJsonEncoder)
         == '{"0": 1, "1": 2, "2": 3}'
     )
+
+
+def test_none_encoding():
+    """Test None type encoding"""
+    data = {"null_value": None}
+    encoded = json.dumps(data, cls=AdvancedJsonEncoder)
+    assert json.loads(encoded) == {"null_value": None}
+
+
+def test_unsupported_type_fallback():
+    """Test fallback to default encoder for unsupported types"""
+
+    class UnsupportedType:
+        pass
+
+    with pytest.raises(TypeError):
+        json.dumps(UnsupportedType(), cls=AdvancedJsonEncoder)
 
 
 # Test for json_encoder.py ImportError case
@@ -102,3 +107,94 @@ def test_pydantic_import_error():
 
         assert not pytest_evals.json_encoder.HAVE_PYDANTIC
         assert pytest_evals.json_encoder.BaseModel is type(None)
+
+
+def test_pandas_import_error():
+    """Test the JSON encoder when pandas is not available"""
+    with patch.dict(sys.modules, {"pandas": None}):
+        # Force reload of the module to trigger ImportError
+        import importlib
+        import pytest_evals.json_encoder
+
+        importlib.reload(pytest_evals.json_encoder)
+
+        # Verify pandas-related flags and functions
+        assert not pytest_evals.json_encoder.HAVE_PANDAS
+
+        # Test is_series function
+        class MockObject:
+            pass
+
+        mock_obj = MockObject()
+        assert not pytest_evals.json_encoder.is_series(mock_obj)
+
+        # Test is_dataframe function
+        assert not pytest_evals.json_encoder.is_dataframe(mock_obj)
+
+
+def test_none_type_variations():
+    """Test different scenarios involving None type"""
+    # Test None in different contexts
+    test_cases = [
+        {"direct_none": None},
+        {"nested_none": {"key": None}},
+        {"none_in_list": [1, None, 3]},
+        {"multiple_nones": [None, None]},
+        None,
+    ]
+
+    for case in test_cases:
+        encoded = json.dumps(case, cls=AdvancedJsonEncoder)
+        decoded = json.loads(encoded)
+        assert decoded == case
+
+
+def test_mixed_none_with_other_types():
+    """Test None combined with other supported types"""
+
+    @dataclass
+    class DataWithNone:
+        value: None
+        name: str
+
+    data = DataWithNone(value=None, name="test")
+    encoded = json.dumps(data, cls=AdvancedJsonEncoder)
+    decoded = json.loads(encoded)
+
+    assert decoded == {"value": None, "name": "test"}
+
+    # Test with enum
+    class StatusEnum(Enum):
+        NONE = None
+        ACTIVE = "active"
+
+    data = {"status": StatusEnum.NONE}
+    encoded = json.dumps(data, cls=AdvancedJsonEncoder)
+    decoded = json.loads(encoded)
+
+    assert decoded == {"status": None}
+
+
+def test_explicit_none_handling():
+    """Test the explicit None handling in the default method of AdvancedJsonEncoder"""
+
+    class CustomNone:
+        """A custom class that returns None from its default encoding"""
+
+        def __repr__(self):
+            return "None"
+
+    # Create an instance and encode it directly to trigger the default method
+    encoder = AdvancedJsonEncoder()
+    result = encoder.default(
+        type(None)()
+    )  # This explicitly calls default() with None type
+
+    assert result is None
+
+    # Test in context
+    data = {"null_value": type(None)()}
+    encoded = json.dumps(data, cls=AdvancedJsonEncoder)
+    decoded = json.loads(encoded)
+
+    assert decoded == {"null_value": None}
