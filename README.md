@@ -42,22 +42,22 @@ For example, say you're building a support ticket classifier. You want to test c
 keeps working as expected over time.
 
 ```python
-# Run this test against your LLM application: for each row in the test data, predict the output and store the result
+# Predict the LLM performance for each case
 @pytest.mark.eval(name="my_classifier")
 @pytest.mark.parametrize("case", TEST_DATA)
 def test_classifier(case: dict, eval_bag, classifier):
     # Run predictions and store results
     eval_bag.prediction = classifier(case["Input Text"])
     eval_bag.expected = case["Expected Classification"]
-    assert eval_bag.prediction == eval_bag.expected
+    eval_bag.accuracy = eval_bag.prediction == eval_bag.expected
 
 
-# Run this test against your LLM application: for each row in the test data, predict the output
+# Now let's see how our app performing across all cases...
 @pytest.mark.eval_analysis(name="my_classifier")
 def test_analysis(eval_results):
-    accuracy = sum(1 for result in eval_results if result.prediction == result.expected) / len(eval_results)
+    accuracy = sum([result.accuracy for result in eval_results]) / len(eval_results)
     print(f"Accuracy: {accuracy:.2%}")
-    assert accuracy >= 0.7  # Ensure minimum performance
+    assert accuracy >= 0.7  # Ensure our performance is not degrading 🫢
 ```
 
 Then, run your evaluation tests:
