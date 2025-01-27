@@ -1,5 +1,6 @@
 # pragma: exclude file
 import shlex
+from pathlib import Path
 
 try:
     from IPython.core.magic import Magics, magics_class, cell_magic  # type: ignore
@@ -22,10 +23,6 @@ class EvalsMagics(Magics):
         super().__init__(shell)
         try:
             import ipytest
-            from ipytest._impl import ipytest_magic
-
-            self.ipytest = ipytest
-            self.ipytest_magic = ipytest_magic
 
             ipytest.autoconfig(
                 run_in_thread=True,  # pyright: ignore [reportArgumentType]
@@ -41,6 +38,18 @@ class EvalsMagics(Magics):
                 "    ↳ Please install it with: `pip install ipytest`"
             )
 
+    # noinspection PyProtectedMember
+    @staticmethod
+    def cleanup_ipytest_env():
+        import ipytest
+
+        if getattr(ipytest._impl.random_module_path, "_filename", None):
+            if Path(ipytest._impl.random_module_path._filename).exists():  # pyright: ignore [reportFunctionMemberAccess]
+                Path(ipytest._impl.random_module_path._filename).unlink()  # pyright: ignore [reportFunctionMemberAccess]
+                del ipytest._impl.random_module_path._filename  # pyright: ignore [reportFunctionMemberAccess]
+
+            ipytest.clean()
+
     @cell_magic
     def ipytest_evals(self, line, cell):
         """
@@ -54,6 +63,7 @@ class EvalsMagics(Magics):
         # Force reload to ensure fresh test environment
         from pytest_harvest import FIXTURE_STORE
         from IPython.core.getipython import get_ipython
+        import ipytest
 
         FIXTURE_STORE.clear()
 
@@ -63,7 +73,7 @@ class EvalsMagics(Magics):
             run_args.append("--run-eval")
             run_args.append("--run-eval-analysis")
 
-        self.ipytest.clean()
+        self.cleanup_ipytest_env()
 
         try:
             get_ipython().run_cell(cell)  # pyright: ignore [reportOptionalMemberAccess]
@@ -78,7 +88,11 @@ class EvalsMagics(Magics):
 
             raise e
 
-        self.ipytest.run(*run_args)
+        try:
+            ipytest.run(*run_args)
+        except KeyboardInterrupt:
+            self.cleanup_ipytest_env()
+            raise
 
 
 def load_ipython_extension(ipython):
