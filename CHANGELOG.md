@@ -1,3 +1,19 @@
+# [0.3.0](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.7...v0.3.0) (2025-01-21)
+
+
+### Bug Fixes
+
+* more tests for encoding pd ([281d3f2](https://github.com/AlmogBaku/pytest-evals/commit/281d3f2a0989698136989fdc4b3a6095ed039d8b))
+
+
+### Features
+
+* save eval cases as csv ([23e5c6c](https://github.com/AlmogBaku/pytest-evals/commit/23e5c6c7cce8b1a4214a1ca5f8969c7da9d06005))
+
+
+
+
+
 ## [0.2.7](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.6...v0.2.7) (2025-01-21)
 
 
