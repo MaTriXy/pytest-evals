@@ -5,7 +5,6 @@ from enum import Enum
 from unittest.mock import patch
 
 import pandas as pd
-import pytest
 from pydantic import BaseModel
 
 from pytest_evals.json_encoder import AdvancedJsonEncoder
@@ -92,8 +91,9 @@ def test_unsupported_type_fallback():
     class UnsupportedType:
         pass
 
-    with pytest.raises(TypeError):
-        json.dumps(UnsupportedType(), cls=AdvancedJsonEncoder)
+    assert ".UnsupportedType object" in json.dumps(
+        UnsupportedType(), cls=AdvancedJsonEncoder
+    )
 
 
 # Test for json_encoder.py ImportError case
@@ -198,3 +198,22 @@ def test_explicit_none_handling():
     decoded = json.loads(encoded)
 
     assert decoded == {"null_value": None}
+
+
+def test_callable_encoding_edge_cases():
+    """Test various edge cases in callable encoding"""
+
+    def simple_callable():
+        pass
+
+    encoded = json.dumps(simple_callable, cls=AdvancedJsonEncoder)
+    assert '"<tests.test_json_encoder.simple_callable>"' == encoded
+
+    # Test case for when o.__module__ exists but o.__name__ raises an exception
+    class ComplexCallable:
+        def __call__(self, *args, **kwargs):
+            pass
+
+    complex_callable = ComplexCallable()
+    encoded = json.dumps(complex_callable, cls=AdvancedJsonEncoder)
+    assert '"<tests.test_json_encoder.ComplexCallable>"' == encoded

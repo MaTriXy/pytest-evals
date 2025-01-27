@@ -34,6 +34,7 @@ except ImportError:
 class AdvancedJsonEncoder(json.JSONEncoder):
     """JSON encoder that handles Pydantic models (if installed) and other special types."""
 
+    # noinspection PyBroadException
     def default(self, o):
         if HAVE_PYDANTIC and isinstance(o, BaseModel):
             return json.loads(o.model_dump_json())  # type: ignore
@@ -42,11 +43,19 @@ class AdvancedJsonEncoder(json.JSONEncoder):
         if isinstance(o, Enum):
             return o.value
         if isinstance(o, Callable):
-            return f"<{o.__module__}.{o.__name__}>"
+            try:
+                return f"<{o.__module__}.{o.__name__}>"
+            except Exception:
+                try:
+                    return f"<{o.__module__}.{o.__class__.__name__}>"
+                except Exception:
+                    return repr(o)
         if isinstance(o, type(None)):
             return None
         if HAVE_PANDAS and is_series(o):
             return o.to_dict()
         if HAVE_PANDAS and is_dataframe(o):
             return o.to_dict(orient="records")
+        if hasattr(o, "__repr__"):
+            return repr(o)
         return super().default(o)
