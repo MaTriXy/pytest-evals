@@ -45,9 +45,11 @@ class EvalsMagics(Magics):
 
         if getattr(ipytest._impl.random_module_path, "_filename", None):
             if Path(ipytest._impl.random_module_path._filename).exists():  # pyright: ignore [reportFunctionMemberAccess]
-                Path(ipytest._impl.random_module_path._filename).unlink()  # pyright: ignore [reportFunctionMemberAccess]
-                del ipytest._impl.random_module_path._filename  # pyright: ignore [reportFunctionMemberAccess]
-
+                try:
+                    Path(ipytest._impl.random_module_path._filename).unlink()  # pyright: ignore [reportFunctionMemberAccess]
+                    del ipytest._impl.random_module_path._filename  # pyright: ignore [reportFunctionMemberAccess]
+                except Exception:
+                    pass
             ipytest.clean()
 
     @cell_magic
