@@ -1,3 +1,15 @@
+## [0.3.1](https://github.com/AlmogBaku/pytest-evals/compare/v0.3.0...v0.3.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* ipytest bugs recovery ([0e47bfd](https://github.com/AlmogBaku/pytest-evals/commit/0e47bfd5716f660b8061e546bca4ef90ee544c3d))
+* json encoder bu ([5df0582](https://github.com/AlmogBaku/pytest-evals/commit/5df05822b53d6218c5fbac077fa6b3042375c6e4))
+
+
+
+
+
 # [0.3.0](https://github.com/AlmogBaku/pytest-evals/compare/v0.2.7...v0.3.0) (2025-01-21)
 
 
