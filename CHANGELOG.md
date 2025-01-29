@@ -1,3 +1,14 @@
+## [0.3.2](https://github.com/AlmogBaku/pytest-evals/compare/v0.3.1...v0.3.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* rare notebook race condition ([b56a3a7](https://github.com/AlmogBaku/pytest-evals/commit/b56a3a73758bd27428f5959f6a296c622b4ae5e6))
+
+
+
+
+
 ## [0.3.1](https://github.com/AlmogBaku/pytest-evals/compare/v0.3.0...v0.3.1) (2025-01-27)
 
 
