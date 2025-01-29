@@ -232,7 +232,9 @@ def pytest_sessionfinish(session):
                     }
                     for name, data in res.items()
                 ]
-            ).set_index("test_id")
+            )
+            if not results_df.empty:
+                results_df = results_df.set_index("test_id")
             results_df.to_csv(session.config.out_path / "eval-results-raw.csv")
 
 

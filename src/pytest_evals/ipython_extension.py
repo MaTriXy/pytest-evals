@@ -75,6 +75,11 @@ class EvalsMagics(Magics):
             run_args.append("--run-eval")
             run_args.append("--run-eval-analysis")
 
+        if "-n" in run_args:
+            raise ValueError(
+                "The `-n` flag is not supported with `ipytest` (in notebooks)."
+            )
+
         self.cleanup_ipytest_env()
 
         try:
