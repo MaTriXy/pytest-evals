@@ -1,3 +1,14 @@
+## [0.3.3](https://github.com/AlmogBaku/pytest-evals/compare/v0.3.2...v0.3.3) (2025-01-29)
+
+
+### Bug Fixes
+
+* minor bug ([8bfa9ae](https://github.com/AlmogBaku/pytest-evals/commit/8bfa9aed673e2133949d24333d4ad49635c2596b))
+
+
+
+
+
 ## [0.3.2](https://github.com/AlmogBaku/pytest-evals/compare/v0.3.1...v0.3.2) (2025-01-28)
 
 
