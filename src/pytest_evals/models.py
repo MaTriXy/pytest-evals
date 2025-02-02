@@ -17,7 +17,7 @@ class EvalResults:
     duration_ms: float
     test_params: dict[str, Any]
     test_name: str
-    result: ResultsBag
+    result: EvalBag
 
     @classmethod
     def from_result_bag(cls, item: Mapping[str, Any]) -> "EvalResults":
@@ -28,7 +28,7 @@ class EvalResults:
             duration_ms=item["duration_ms"],
             test_params=item["params"],
             test_name=item["pytest_obj_name"],
-            result=ResultsBag(item["fixtures"]["eval_bag"])
+            result=EvalBag(item["fixtures"]["eval_bag"])
             if "eval_bag" in item["fixtures"]
-            else ResultsBag(),
+            else EvalBag(),
         )
